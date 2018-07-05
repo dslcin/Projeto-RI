@@ -4,8 +4,6 @@ import os
 import re
 from Indexer.Variant_Size import encode
 
-folds = ['Inverted/', 'Variant/', 'Pickled/']
-
 def getPositions(word, words):
     positions = []
     
@@ -17,20 +15,20 @@ def getPositions(word, words):
     return positions
 
 def writeFile(field, indexType, fileType, data):
-    for fold in folds:
-        path = 'Indexer/Files/' + fold + indexType + fileType
-        os.makedirs(path, exist_ok=True)
-        
-        if 'Inverted' in fold:
-            with open(path + field, 'w') as f:
-                 f.write(json.dumps(data))
-        else:
-            if 'Variant' in fold:
-                newData = encode.encoder(data)
-            else:
-                newData = data
-            with open(path + field, 'wb') as f:
-                pickle.dump(newData, f)
+    path = 'Indexer/Files/Inverted/' + indexType + fileType
+    os.makedirs(path, exist_ok=True)
+    with open(path + field, 'w') as f:
+        f.write(json.dumps(data))
+    
+    path = 'Indexer/Files/Inverted/' + indexType + 'Variant/' + fileType
+    os.makedirs(path, exist_ok=True)
+    with open(path + field, 'wb') as f:
+        pickle.dump(encode.encoder(data), f)
+
+    path = 'Indexer/Files/Inverted/' + indexType + 'Pickled/' + fileType
+    os.makedirs(path, exist_ok=True)
+    with open(path + field, 'wb') as f:
+        pickle.dump(data, f)
 
 def writeFiles(field, indexes, cIndexes, indexesFrequency, cIndexesFrequency, posIndexes, cPosIndexes):
     
